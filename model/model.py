@@ -28,8 +28,8 @@ class Model:
         #archi
         self._edges = DAO.get_edges(durata)
         for n1, n2 in self._edges:
-            a1 = self.id_map[n1.id]
-            a2 = self.id_map[n2.id]
+            a1 = self.id_map[n1]
+            a2 = self.id_map[n2]
             self.G.add_edge(a1, a2)
 
         print(f'Nodi: {self.G.number_of_nodes()}, archi: {self.G.number_of_edges()}')
@@ -37,3 +37,6 @@ class Model:
 
     def get_graph_details(self):
         return self.G.number_of_nodes(), self.G.number_of_edges()
+
+    def get_component(self, album):
+        return list(nx.node_connected_component(self.G, album))

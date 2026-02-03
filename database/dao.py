@@ -9,11 +9,11 @@ class DAO:
         result = []
 
         cursor = conn.cursor(dictionary=True)
-        query = """ SELECT a.id, a.title, a.artist_id, SUM(t.milliseconds/60000) as duration
+        query = """ SELECT a.id, a.title, a.artist_id, SUM(t.milliseconds/60000) AS duration
                     FROM album a, track t
                     WHERE a.id = t.album_id
                     GROUP BY a.id, a.title, a.artist_id
-                    HAVING duration >= %s"""
+                    HAVING SUM(t.milliseconds/60000) >= %s"""
 
         cursor.execute(query, (durata,))
 
@@ -37,12 +37,12 @@ class DAO:
                         AND al2.id = t2.album_id AND t2.id = p2.track_id
                         AND p1.playlist_id = p2.playlist_id
                         AND al1.id > al2.id
-                        AND al1.id in (SELECT a.id
+                        AND al1.id IN (SELECT a.id
                                             FROM album a,track t
                                             WHERE t.album_id = a.id
                                             GROUP BY a.id,a.title,a.artist_id
                                             HAVING SUM(t.milliseconds)/60000 > %s)
-                        AND al2.id in (SELCT a.id
+                        AND al2.id IN (SELECT a.id
                                             FROM album a,track t
                                             WHERE t.album_id = a.id
                                             GROUP BY a.id,a.title,a.artist_id
